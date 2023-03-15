@@ -7,7 +7,7 @@
             </v-file-input>
             <template v-if="displayUploadProgress">
                 <v-row class="mb-3">
-                <v-col cols="auto" align-self="center">    
+                <v-col cols="11" align-self="center">    
                 <v-progress-linear v-model="percent" height="25" color="primary">
                     <strong class="text-grey-lighten-1">{{ Math.ceil(percent) }}%</strong>
                 </v-progress-linear>
