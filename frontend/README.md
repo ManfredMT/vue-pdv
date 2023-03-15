@@ -1,24 +1,25 @@
-# frontend
+# 前端项目
 
-## Project setup
-```
+## 安装依赖
+
+```bash
 npm install
 ```
 
-### Compiles and hot-reloads for development
-```
+### 开发
+
+```bash
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
+### 打包
+
+```bash
 npm run build
 ```
 
-### Lints and fixes files
-```
+### 审查代码
+
+```bash
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
