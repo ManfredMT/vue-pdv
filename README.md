@@ -2,6 +2,11 @@
 
 响应式视频网站
 
+## 网页图
+
+![3-devices-black](https://user-images.githubusercontent.com/27950295/225496965-2074b3d7-a384-46c6-a771-1219c0c51402.png)
+![3-devices-black (1)](https://user-images.githubusercontent.com/27950295/225497015-01fee6a0-6c25-490b-9e3b-5fd25725bb1d.png)
+
 ## 功能
 
 - 用户登录,注册和修改密码
