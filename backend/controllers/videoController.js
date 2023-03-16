@@ -5,6 +5,7 @@ const ffmpeg = require("fluent-ffmpeg");
 const Behavior = require("../models/behaviorModel");
 const Comment = require("../models/commentModel");
 const File = require("../models/fileModel");
+const mime = require("mime-types");
 
 // @desc   video streaming
 // @route  GET /api/videos/stream/:videoId
@@ -15,7 +16,14 @@ const streamVideo = asyncHandler(async (req, res) => {
   if (!range) {
     res.status(416).send("Range not provided");
   }
-  const videoPath = __dirname + `/../uploads/videos/${videoId}.mp4`;
+  const videoFilename = fs.readdirSync('./uploads/videos').filter(fn=>fn.startsWith(videoId));
+  const videoPath = __dirname + '/../uploads/videos/'+videoFilename;
+  const mimeType = mime.lookup(videoPath);
+  if(!mimeType.startsWith("video/")) {
+    res.status(400);
+    throw new Error("文件类型错误");
+  }
+  
 
   const videoSize = fs.statSync(videoPath).size;
   const chunkSize = 10 * 1024 * 1024; // 10 mb
@@ -26,7 +34,7 @@ const streamVideo = asyncHandler(async (req, res) => {
     "Content-Range": `bytes ${start}-${end}/${videoSize}`,
     "Accept-Ranges": "bytes",
     "Content-Length": contentLength,
-    "Content-Type": "video/mp4",
+    "Content-Type": mimeType,
   };
   res.writeHead(206, headers);
   const videoStream = fs.createReadStream(videoPath, { start, end });
@@ -44,7 +52,6 @@ const storage = multer.diskStorage({
     if (chunkOrFile === "chunk") {
       cb(null, "./uploads/chunks/" + fileMD5);
     } else if (chunkOrFile === "file") {
-      console.log("small mp4 file dir");
       cb(null, "./uploads/videos");
     }
   },
@@ -72,7 +79,6 @@ const storage = multer.diskStorage({
         file.stream.emit("end");
       });
     } else if (chunkOrFile === "file") {
-      // console.log("small mp4 file filename");
       cb(null, uuidv4() + path.extname(file.originalname));
     }
   },
@@ -159,8 +165,8 @@ function fileFilter(req, file, cb) {
       }
     });
   } else if (chunkOrFile === "file") {
-    if (file.mimetype !== "video/mp4") {
-      cb(new Error("Video type error"));
+    if (!file.mimetype.startsWith("video/")) {
+      cb(new Error("请上传视频文件"));
     } else {
       File.findOne({ md5: fileMD5 }).then((doc) => {
         cb(null, !doc);
@@ -291,11 +297,16 @@ const postVideo = asyncHandler(async (req, res) => {
     throw new Error("未设置视频文件");
   } else {
     const filename = req.body.filename;
-    const extname = filename.substring(filename.lastIndexOf(".") + 1);
-    if (extname.toLowerCase() !== "mp4" && extname.toLowerCase() !== "m4v") {
+    //const extname = filename.substring(filename.lastIndexOf(".") + 1);
+    const mimeType = mime.lookup("./uploads/videos/" + filename);
+    if (!mimeType.startsWith("video/")) {
       res.status(400);
       throw new Error("File type error");
     }
+    // if (extname.toLowerCase() !== "mp4" && extname.toLowerCase() !== "m4v") {
+    //   res.status(400);
+    //   throw new Error("File type error");
+    // }
   }
 
   if (!req.body.md5) {
@@ -346,7 +357,7 @@ const postVideo = asyncHandler(async (req, res) => {
         })
         .takeScreenshots({
           count: 1,
-          timemarks: ["10%"], // 10% of the video length
+          timemarks: ["50%"], // 10% of the video length
           folder: __dirname + "/../uploads/image",
           filename: "thumbnail-%b.png",
           size: "400x225",

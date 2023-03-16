@@ -2,7 +2,7 @@
     <HCenterBox>
         <div class="mb-6 text-center text-h6">用户视频上传</div>
         <v-form v-model="form" @submit="onSubmit">
-            <v-file-input v-model="file" label="视频文件" accept="video/mp4" :rules="[required, checkMediaTypeMp4]"
+            <v-file-input v-model="file" label="视频文件" accept="video/*,.mkv" :rules="[required, checkMediaTypeVideo]"
                 @change="onChangeFile" show-size>
             </v-file-input>
             <template v-if="displayUploadProgress">
@@ -121,6 +121,15 @@ function checkMediaTypeMp4(v) {
         const type = v[0].type;
         return type === 'video/mp4' || '视频文件必须为mp4格式';
     } else {
+        return true;
+    }
+}
+
+function checkMediaTypeVideo(v) {
+    if(v.length) {
+        const type = v[0].type;
+        return type.startsWith('video/') || '文件必须为视频格式';
+    }else {
         return true;
     }
 }
