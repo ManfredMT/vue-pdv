@@ -63,3 +63,7 @@ npm start
 ```bash
 npm run serve
 ```
+
+## 开源许可证
+
+MIT
