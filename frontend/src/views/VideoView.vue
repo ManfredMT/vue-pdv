@@ -373,7 +373,6 @@ const user = computed(() => {
   return JSON.parse(localStorPDV.value);
 })
 
-
 function getPageData(videoId) {
   const userToken = JSON.parse(localStorPDV.value)?.token;
   videoInfoLoading.value = true;
@@ -402,8 +401,7 @@ function getPageData(videoId) {
     console.error("获取评论错误: "+error);
     commentsLoading.value = false;
   });
-
-  if (!userToken) {
+  if (!isLogin.value) {
     feedbackData.value = true;
   } else {
     videoFeedbackLoading.value = true;
@@ -424,7 +422,7 @@ function getPageData(videoId) {
 onMounted(() => {
   getPageData(route.params.id);
   const userToken = JSON.parse(localStorPDV.value)?.token;
-  if (userToken) {
+  if (isLogin.value) {
     recordWatchHis(route.params.id, userToken).then(() => {
     }).catch((error) =>{
       console.error("记录观看历史错误: "+error);
