@@ -224,7 +224,7 @@
                     </span>
                     <span class="font-weight-light">{{ new Date(commentItem.createdAt).toLocaleString() }}</span>
                   </p>
-                  <v-btn v-show="user && user._id === commentItem.user" icon="mdi-delete-outline" color="red-lighten-1"
+                  <v-btn v-show="isLogin && user && user._id === commentItem.user" icon="mdi-delete-outline" color="red-lighten-1"
                     @click="(e) => onDeleteComment(commentItem._id, e)" variant="text">
                   </v-btn>
                 </div>
@@ -441,7 +441,7 @@ watch(
     comment.value = '';
     getPageData(newId);
     const userToken = JSON.parse(localStorPDV.value)?.token;
-    if (userToken) {
+    if (isLogin.value) {
       recordWatchHis(route.params.id, userToken).then(() => {
       }).catch((error) => {
         console.error("记录观看历史错误: "+error)
